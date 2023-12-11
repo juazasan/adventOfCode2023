@@ -1,81 +1,70 @@
-import unittest
+"""test for part1.py"""
 import part1
 
-class TestPart2(unittest.TestCase):
+class TestPart1:
+    """Tests for part1.py"""
 
-    def test_parse_game(self):
-        game = part1.parse_game('Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green')
-        games = [
-            {
-                'red': 4,
-                'green': 0,
-                'blue': 3,
-            },
-            {
-                'red': 1,
-                'green': 2,
-                'blue': 6,
-            },
-            {
-                'red': 0,
-                'green': 2,
-                'blue': 0,
-            },
-        ]
-        self.assertEqual(game['id'], 1)
-        self.assertEqual(game['games'], games)
+    test1=[
+        list(".......#."),
+        list("......12."),
+        list("......34."),
+    ]
 
-    def test_is_game_possible(self):
-        cubes_guess = {
-            'red': 12,
-            'green': 13,
-            'blue': 14,
-        }
-        games_ok = [
-            {
-                'red': 4,
-                'green': 0,
-                'blue': 3,
-            },
-            {
-                'red': 1,
-                'green': 2,
-                'blue': 6,
-            },
-            {
-                'red': 0,
-                'green': 2,
-                'blue': 0,
-            },
-        ]
-        games_error = [
-            {
-                'red': 20,
-                'green': 8,
-                'blue': 6,
-            },
-            {
-                'red': 4,
-                'green': 13,
-                'blue': 5,
-            },
-            {
-                'red': 1,
-                'green': 5,
-                'blue': 0,
-            },
-        ]
-        self.assertTrue(part1.is_game_possible(games_ok, cubes_guess))
-        self.assertFalse(part1.is_game_possible(games_error, cubes_guess))
+    test2=[
+        list("467..114.."),
+        list("...*......"),
+        list("..35..633."),
+        list("......#..."),
+        list("617*......"),
+        list(".....+.58."),
+        list("..592....."),
+        list("......755."),
+        list("...$.*...."),
+        list(".664.598.."),
+    ]
 
-    def test_day02_part1(self):
-        cubes_guess = {
-            'red': 12,
-            'green': 13,
-            'blue': 14,
-        }
-        self.assertEqual(part1.day02_part1('input_test', cubes_guess), 8)
+    test3=[
+        list("467..114.."),
+        list("...*......"),
+    ]
 
+    test4=[
+        list("467..114"),
+        list("...*...*"),
+    ]
 
-if __name__ == '__main__':
-    unittest.main()
+    test5=[
+        list("467**114"),
+        list("........"),
+    ]
+
+    test6=[
+        list(".679.....662....71............................805..........862.680...................................................................687...."),
+        list("............*....-..811..........846..855......*.............*..$........230.92@............................=.....................92........"),
+    ]
+
+    def test_is_character(self):
+        """Tests for is_character(c)"""
+        assert part1.is_character('.') is False
+        assert part1.is_character('1') is False
+        assert part1.is_character('#') is True
+        assert part1.is_character('L') is False
+        assert part1.is_character('$') is True
+
+    def test_c_has_adjacent(self):
+        """Tests for c_has_adjacent(x, y, schmtic)"""
+        assert part1.c_has_adjacent(0, 0, self.test1) is False
+        assert part1.c_has_adjacent(7, 1, self.test1) is True
+        assert part1.c_has_adjacent(8, 2, self.test1) is False
+        assert part1.c_has_adjacent(5, 0, self.test3) is False
+        assert part1.c_has_adjacent(6, 0, self.test3) is False
+        assert part1.c_has_adjacent(7, 0, self.test3) is False
+
+    def test_sum_parts(self):
+        """Tests for sum_parts(schematic)"""
+        assert part1.sum_parts(self.test1) == 12
+        assert part1.sum_parts(self.test3) == 467
+        assert part1.sum_parts(self.test4) == 581
+        assert part1.sum_parts(self.test5) == 581
+        assert part1.sum_parts(self.test2) == 4361
+        assert part1.sum_parts(self.test6) == 3172

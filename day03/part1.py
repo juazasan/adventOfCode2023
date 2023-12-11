@@ -6,6 +6,10 @@ def is_character(c):
         return False
     if c.isdigit():
         return False
+    if 'A' <= c <= 'Z':
+        return False
+    if 'a' <= c <= 'z':
+        return False
     return True
 
 def c_has_adjacent(x, y, schmtic):
@@ -78,14 +82,23 @@ def sum_parts(schematic):
                 is_valid_part = False
                 new_number = 0
                 continue
+            if not c.isdigit() and not is_new_number and not is_valid_part:
+                is_new_number = True
+                is_valid_part = False
+                new_number = 0
+                continue
             if c.isdigit() and not is_new_number:
                 new_number *= 10
                 new_number += int(c)
             if c.isdigit() and is_new_number:
                 new_number = int(c)
                 is_new_number = False
-            if not is_valid_part:
+            if c.isdigit() and not is_valid_part:
                 is_valid_part = c_has_adjacent(x, y, schematic)
+        
+        if not is_new_number and is_valid_part:
+            total += new_number
+
     return total
 
 if __name__ == '__main__':
@@ -93,5 +106,5 @@ if __name__ == '__main__':
     with open('input', 'r', encoding='utf-8') as file:
         for line in file:
             row = list(line)
-        source_schmtic.append(row)
+            source_schmtic.append(row)
     print(str(sum_parts(source_schmtic)))
