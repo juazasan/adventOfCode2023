@@ -12,7 +12,7 @@ def number_has_adjacent(number, schmtic):
     """Checks if number has any adjacent characters around in schmtic"""
     y = number['begin']['y']
     cell_has_adjacent = False
-    for x in range(number['begin']['x'], number['end']['x']):
+    for x in range(number['begin']['x'], number['end']['x']+1):
         if 0 < x < len(schmtic[y])-1 and 0 < y < len(schmtic)-1 and \
             any(is_character(c) for c in [schmtic[y][x-1],
                                         schmtic[y][x+1],
