@@ -1,71 +1,140 @@
-import unittest
-import part2
+"""test for part1.py"""
+import part1
+import re
 
-class TestPart2(unittest.TestCase):
+class TestPart1:
+    """Tests for part1.py"""
 
-    def test_parse_game(self):
-        game = part2.parse_game('Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green')
-        games = [
+    test1={
+        'schematic': [
+            list(".......#."),
+            list("......12."),
+            list("......34."),
+        ],
+        'numbers': [
             {
-                'red': 4,
-                'green': 0,
-                'blue': 3,
+                'begin': {
+                    'x': 6,
+                    'y': 1,
+                },
+                'end': {
+                    'x': 7,
+                    'y': 1,
+                }
             },
             {
-                'red': 1,
-                'green': 2,
-                'blue': 6,
+                'begin': {
+                    'x': 6,
+                    'y': 2,
+                },
+                'end': {
+                    'x': 7,
+                    'y': 2,
+                }
             },
-            {
-                'red': 0,
-                'green': 2,
-                'blue': 0,
-            },
-        ]
-        self.assertEqual(game['id'], 1)
-        self.assertEqual(game['games'], games)
+        ],
+    }
 
-    def test_calculate_game_power(self):
-        game_48 = [
-            {
-                'red': 4,
-                'green': 0,
-                'blue': 3,
-            },
-            {
-                'red': 1,
-                'green': 2,
-                'blue': 6,
-            },
-            {
-                'red': 0,
-                'green': 2,
-                'blue': 0,
-            },
-        ]
-        game_1560 = [
-            {
-                'red': 20,
-                'green': 8,
-                'blue': 6,
-            },
-            {
-                'red': 4,
-                'green': 13,
-                'blue': 5,
-            },
-            {
-                'red': 1,
-                'green': 5,
-                'blue': 0,
-            },
-        ]
-        self.assertEqual(part2.calculate_game_power(game_48), 48)
-        self.assertEqual(part2.calculate_game_power(game_1560), 1560)
+    test2={
+        'sch': [
+        list("467..114.."),
+        list("...*......"),
+        list("..35..633."),
+        list("......#..."),
+        list("617*......"),
+        list(".....+.58."),
+        list("..592....."),
+        list("......755."),
+        list("...$.*...."),
+        list(".664.598.."),
+    ],
+        'numbers': [467, 114, 35, 633, 617, 58, 592, 755, 664, 598],
+    }
 
-    def test_day02_part2(self):
-        self.assertEqual(part2.day02_part2('input_test'), 2286)
+    test3={
+        'sch' : [
+        list("467..114.."),
+        list("...*......"),
+    ],
+        'numbers': [467, 114],
+    }
 
+    test4={
+        'sch': [
+        list("467..114"),
+        list("...*...*"),
+    ],
+    'numbers': [467, 114],
+    }
 
-if __name__ == '__main__':
-    unittest.main()
+    test5={
+        'sch': [
+        list("467**114"),
+        list("........"),
+    ],
+    'numbers': [467, 114],
+    }
+
+    test6={
+        'sch': [
+        list(".679.....662....71............................805..........862.680...................................................................687...."),
+        list("............*....-..811..........846..855......*.............*..$........230.92@............................=.....................92........"),
+    ],
+    'numbers': [679, 662, 71, 805, 862, 680, 687, 811, 846, 855, 230, 92, 92],
+    'valid_numbers': [662, 71, 805, 862, 680, 92],
+    }
+
+    def test_is_character(self):
+        """Tests for is_character(c)"""
+        assert part1.is_character('.') is False
+        assert part1.is_character('1') is False
+        assert part1.is_character('#') is True
+        assert part1.is_character('L') is True
+        assert part1.is_character('$') is True
+
+    def test_number_has_adjacent(self):
+        """Tests for c_has_adjacent(x, y, schmtic)"""
+        assert part1.number_has_adjacent(self.test1['numbers'][0], self.test1['schematic']) is True
+        assert part1.number_has_adjacent(self.test1['numbers'][1], self.test1['schematic']) is False
+        got_numbers = part1.find_numbers(self.test6['sch'])
+        got_valid_numbers = []
+        for number in got_numbers:
+            if part1.number_has_adjacent(number, self.test6['sch']):
+                got_valid_numbers.append(number['value'])
+        assert got_valid_numbers == self.test6['valid_numbers']
+        # assert part1.c_has_adjacent(5, 0, self.test3) is False
+        # assert part1.c_has_adjacent(6, 0, self.test3) is False
+        # assert part1.c_has_adjacent(7, 0, self.test3) is False
+
+    def test_find_numbers(self):
+        """Tests for find_numbers(sch)"""
+        for number in part1.find_numbers(self.test2['sch']):
+            assert number['value'] in self.test2['numbers']
+        for number in part1.find_numbers(self.test6['sch']):
+            assert number['value'] in self.test6['numbers']
+        for number in part1.find_numbers(self.test1['schematic']):
+            assert number['value'] in [12, 34]
+        for number in part1.find_numbers(self.test3['sch']):
+            assert number['value'] in self.test3['numbers']
+        for number in part1.find_numbers(self.test4['sch']):
+            assert number['value'] in self.test4['numbers']
+        for number in part1.find_numbers(self.test5['sch']):
+            assert number['value'] in self.test5['numbers']
+
+        """now from input"""
+        # Read the file
+        with open('day03/input', 'r') as file:
+            content = file.read()
+        # Extract all numbers using regular expression
+        expected_numbers = [int(num) for num in re.findall(r'\d+', content)]
+        # Got numbers from input
+        source_schmtic = part1.parse_input(content.split('\n'))
+        got_numbers = part1.find_numbers(source_schmtic)
+
+        assert len(expected_numbers) == len(got_numbers)
+        total = 0
+        for number in got_numbers:
+            total += number['value']
+            assert number['value'] in expected_numbers
+        assert total == sum(expected_numbers)
+

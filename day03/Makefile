@@ -9,3 +9,7 @@ test2:
 
 run2:
 	python3 part2.py
+
+copy:
+	cp part1.py part2.py
+	cp part1_test.py part2_test.py
